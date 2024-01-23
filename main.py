@@ -3,9 +3,9 @@
 
 # Variables
 literals = ["+", "-", "(", ")", "=", " "]
-userInput = ""
 userTokens = []
 userVariableTokens = {}
+isLooping = True
 
 # Functions
 def TokenizeInput(input):
@@ -18,74 +18,70 @@ def TokenizeInput(input):
             # 'i' is not a literal, thus is part of curToken
             curToken = curToken + i
             if curIndex == len(input) - 1:
+                # If this is the end of the input, submit the curToken.
                 SubmitCurrentToken(curToken)
                 curToken = ""
         elif i != " ":
+            # i is literal, and not white space. This means we submit the curToken to the list.
             SubmitCurrentToken(curToken)
             curToken = ""
             userTokens.append(i)
-        curIndex = curIndex + 1
+        curIndex += 1
 
 def SubmitCurrentToken(curToken):
+    # If token is a number, convert token to int and append to token
     if curToken.isnumeric():
         userTokens.append(int(curToken))
+    # Non-numerical tokens are variables.
     elif curToken.isalpha():
-        if curToken in userVariableTokens:
-            userTokens.append(userVariableTokens.get(curToken))
-        else:
-            userVariableTokens[curToken] = 0
-    else:
-        print("ERROR: Did not submit token")
+        userTokens.append(curToken)
 
 def EvaluateTokens(arrayOfTokens):
-    operand1 = ""
-    operator = ""
-    operand2 = ""
-    curTotal = 0;
+    operand1, operator, operand2 = "", "", ""
+    curTotal = 0
     isSettingToVariable = False
 
+    ## NOTE:
+    # Here is where the variable logic will be.
+    # Vars are now str in the token list.
+    # Need to dynamically define and recall variables.
+    # '=' is to define.
+    # no '=' is a recall.
     while len(arrayOfTokens) > 0:
         print(str(arrayOfTokens))
         i = arrayOfTokens.pop(0)
         if i == "=":
             isSettingToVariable = True
         elif i == "(":
+            # Start recursive call to evaluate parenthesis before parental loop to maintain proper priority.
             if operand1 == "":
                 operand1 = EvaluateTokens(arrayOfTokens)
             elif operand2 == "":
                 operand2 = EvaluateTokens(arrayOfTokens)
-                curTotal = curTotal + EvaluateCurExpression(operand1, operator, operand2)
+                curTotal += EvaluateCurExpression(operand1, operator, operand2)
         elif i == ")":
             return curTotal
         elif i in literals:
             operator = i
-            print("curOperator: " + str(operator))
+        # This is the logic state where only non-literal tokens exist.
         elif operand1 == "":
             operand1 = i
-            print("operand1: " + str(operand1))
         elif operand2 == "":
             operand2 = i
-            print("operand2: " + str(operand2))
             curTotal = curTotal + EvaluateCurExpression(operand1, operator, operand2)
-
-        print("curTotal: " + str(curTotal))
     if isSettingToVariable:
-        userVariableTokens[len(userVariableTokens) -1 ] = curTotal
-        return ""
-    else:
-        return curTotal
+        userVariableTokens[list(userVariableTokens)[-1]] = curTotal
+    return curTotal
 
 def EvaluateCurExpression(operand1, operator, operand2):
-    print("Evaluating: " + str(operand1) + str(operator) + str(operand2))
     match operator:
         case "+":
             return operand1 + operand2
         case "-":
             return operand1 - operand2
 
-while userInput != "quit":
-    userInput = input()
-    TokenizeInput(userInput)
+while isLooping:
+    TokenizeInput(input())
     if userTokens.count("(") is userTokens.count(")"):
         print(EvaluateTokens(userTokens))
     else:
