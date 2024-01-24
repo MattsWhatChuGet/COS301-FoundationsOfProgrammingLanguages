@@ -3,6 +3,7 @@
 
 # Variables
 literals = ["+", "-", "(", ")", "=", " "]
+userInput = ""
 userTokens = []
 userVariableTokens = {}
 isLooping = True
@@ -50,28 +51,40 @@ def EvaluateTokens(arrayOfTokens):
     while len(arrayOfTokens) > 0:
         print(str(arrayOfTokens))
         i = arrayOfTokens.pop(0)
-        if i == "=":
-            isSettingToVariable = True
-        elif i == "(":
-            # Start recursive call to evaluate parenthesis before parental loop to maintain proper priority.
-            if operand1 == "":
-                operand1 = EvaluateTokens(arrayOfTokens)
+
+        if userTokens.count("=") is 1:
+            # If this is an assignment expression store evaluated value into variable.
+            arrayOfTokens.pop(0)
+            userVariableTokens[i] = EvaluateTokens(arrayOfTokens)
+            return True
+        elif userTokens.count("=") > 1:
+            print("ERROR: Too many '='")
+            return False
+        else:
+            if i == "(":
+                # Start recursive call to evaluate parenthesis before parental loop to maintain proper priority.
+                if operand1 == "":
+                    operand1 = EvaluateTokens(arrayOfTokens)
+                elif operand2 == "":
+                    operand2 = EvaluateTokens(arrayOfTokens)
+                    curTotal += EvaluateCurExpression(operand1, operator, operand2)
+            elif i == ")":
+                return curTotal
+            elif i in literals:
+                operator = i
+            # This is the logic state where only non-literal tokens exist.
+            elif operand1 == "":
+                if i in userVariableTokens.keys():
+                    operand1 = userVariableTokens.get(i)
+                else:
+                    operand1 = i
             elif operand2 == "":
-                operand2 = EvaluateTokens(arrayOfTokens)
+                if i in userVariableTokens.keys():
+                    operand2 = userVariableTokens.get(i)
+                else:
+                    operand2 = i
                 curTotal += EvaluateCurExpression(operand1, operator, operand2)
-        elif i == ")":
-            return curTotal
-        elif i in literals:
-            operator = i
-        # This is the logic state where only non-literal tokens exist.
-        elif operand1 == "":
-            operand1 = i
-        elif operand2 == "":
-            operand2 = i
-            curTotal = curTotal + EvaluateCurExpression(operand1, operator, operand2)
-    if isSettingToVariable:
-        userVariableTokens[list(userVariableTokens)[-1]] = curTotal
-    return curTotal
+        return curTotal
 
 def EvaluateCurExpression(operand1, operator, operand2):
     match operator:
