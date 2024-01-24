@@ -38,28 +38,21 @@ def SubmitCurrentToken(curToken):
         userTokens.append(curToken)
 
 def EvaluateTokens(arrayOfTokens):
-    operand1, operator, operand2 = "", "", ""
+    operand1, operand2 = "", ""
+    operator = "+"
     curTotal = 0
-    isSettingToVariable = False
 
-    ## NOTE:
-    # Here is where the variable logic will be.
-    # Vars are now str in the token list.
-    # Need to dynamically define and recall variables.
-    # '=' is to define.
-    # no '=' is a recall.
     while len(arrayOfTokens) > 0:
-        print(str(arrayOfTokens))
         i = arrayOfTokens.pop(0)
 
-        if userTokens.count("=") is 1:
+        if userTokens.count("=") == 1:
             # If this is an assignment expression store evaluated value into variable.
             arrayOfTokens.pop(0)
             userVariableTokens[i] = EvaluateTokens(arrayOfTokens)
-            return True
+            return ""
         elif userTokens.count("=") > 1:
             print("ERROR: Too many '='")
-            return False
+            break
         else:
             if i == "(":
                 # Start recursive call to evaluate parenthesis before parental loop to maintain proper priority.
@@ -78,17 +71,23 @@ def EvaluateTokens(arrayOfTokens):
                     operand1 = userVariableTokens.get(i)
                 else:
                     operand1 = i
+                if len(userTokens) == 0:
+                    curTotal = EvaluateCurExpression(curTotal, operator, operand1)
+                    operand1 = ""
+                    operand2 = ""
             elif operand2 == "":
                 if i in userVariableTokens.keys():
                     operand2 = userVariableTokens.get(i)
                 else:
                     operand2 = i
                 curTotal += EvaluateCurExpression(operand1, operator, operand2)
-        return curTotal
+                operand1 = ""
+                operand2 = ""
+    return curTotal
 
 def EvaluateCurExpression(operand1, operator, operand2):
     match operator:
-        case "+":
+        case "+" | "":
             return operand1 + operand2
         case "-":
             return operand1 - operand2
@@ -99,9 +98,6 @@ while isLooping:
         print(EvaluateTokens(userTokens))
     else:
         print("ERROR: Missing a open/closing parentheses.")
-
-    print("User Int Tokens: " + str(userTokens))
-    print("User Var Tokens: " + str(userVariableTokens))
 
     # Clear Tokens for loop
     userTokens.clear()
