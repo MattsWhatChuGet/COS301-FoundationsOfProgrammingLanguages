@@ -9,7 +9,7 @@ isLooping = True
 
 # Functions
 def TokenizeInput(input):
-    curIndex = 0
+    (2 + 2) - (4) + 10    curIndex = 0
     curToken = ""
 
     # Iterate through input
@@ -61,6 +61,8 @@ def EvaluateTokens(arrayOfTokens):
                     operand2 = EvaluateTokens(arrayOfTokens)
                     curTotal += EvaluateCurExpression(operand1, operator, operand2)
             elif i == ")":
+                if operand1 != "" and operand2 == "":
+                    return EvaluateCurExpression(curTotal, operator, operand1)
                 return curTotal
             elif i in literals:
                 operator = i
