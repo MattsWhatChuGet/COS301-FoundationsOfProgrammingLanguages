@@ -3,7 +3,6 @@
 
 # Variables
 literals = ["+", "-", "(", ")", "=", " "]
-userInput = ""
 userTokens = []
 userVariableTokens = {}
 isLooping = True
@@ -17,7 +16,7 @@ def TokenizeInput(input):
     for i in input:
         if i not in literals:
             # 'i' is not a literal, thus is part of curToken
-            curToken = curToken + i
+            curToken += i
             if curIndex == len(input) - 1:
                 # If this is the end of the input, submit the curToken.
                 SubmitCurrentToken(curToken)
@@ -92,6 +91,7 @@ def EvaluateCurExpression(operand1, operator, operand2):
         case "-":
             return operand1 - operand2
 
+# The Start of the Program
 while isLooping:
     TokenizeInput(input())
     if userTokens.count("(") is userTokens.count(")"):
