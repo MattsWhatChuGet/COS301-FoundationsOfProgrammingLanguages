@@ -3,47 +3,57 @@
 
 # Variables
 literals = ["+", "-", "(", ")", "=", " "]
+operators = ["+", "-", "=", "("]
 userTokens = []
 userVariableTokens = {}
-isLooping = True
 
 # Functions
 def TokenizeInput(input):
-    (2 + 2) - (4) + 10    curIndex = 0
-    curToken = ""
+    curIndex = 0
+    curToken,prevChar = "", ""
+    isCurTokenNeg = False
+
+    # Negative Number handling
+    # if there is a "-" with a "-" as the prevChar or no Prev char, its a neg.
 
     # Iterate through input
     for i in input:
-        if i not in literals:
-            # 'i' is not a literal, thus is part of curToken
-            curToken += i
-            if curIndex == len(input) - 1:
-                # If this is the end of the input, submit the curToken.
-                SubmitCurrentToken(curToken)
+        if i != " ":
+            if i not in literals:
+                # 'i' is not a literal, thus is part of curToken
+                curToken += i
+                if curIndex == len(input) - 1:
+                    # If this is the end of the input, submit the curToken.
+                    SubmitCurrentToken(curToken,isCurTokenNeg)
+                    curToken = ""
+                    isCurTokenNeg = False
+            elif (prevChar in operators and i == "-") | (prevChar == "" and i == "-"):
+                curToken += i
+                isCurTokenNeg = True
+            else:
+                if curToken != "":
+                    SubmitCurrentToken(curToken, isCurTokenNeg)
                 curToken = ""
-        elif i != " ":
-            # i is literal, and not white space. This means we submit the curToken to the list.
-            SubmitCurrentToken(curToken)
-            curToken = ""
-            userTokens.append(i)
+                isCurTokenNeg = False
+                SubmitCurrentToken(i, isCurTokenNeg)
+            prevChar = i
         curIndex += 1
 
-def SubmitCurrentToken(curToken):
+def SubmitCurrentToken(curToken, isNeg):
     # If token is a number, convert token to int and append to token
-    if curToken.isnumeric():
+    if curToken.isnumeric() | isNeg:
         userTokens.append(int(curToken))
+    else:
     # Non-numerical tokens are variables.
-    elif curToken.isalpha():
         userTokens.append(curToken)
 
 def EvaluateTokens(arrayOfTokens):
-    operand1, operand2 = "", ""
+    operand = ""
     operator = "+"
     curTotal = 0
 
     while len(arrayOfTokens) > 0:
         i = arrayOfTokens.pop(0)
-
         if userTokens.count("=") == 1:
             # If this is an assignment expression store evaluated value into variable.
             arrayOfTokens.pop(0)
@@ -54,47 +64,38 @@ def EvaluateTokens(arrayOfTokens):
             break
         else:
             if i == "(":
-                # Start recursive call to evaluate parenthesis before parental loop to maintain proper priority.
-                if operand1 == "":
-                    operand1 = EvaluateTokens(arrayOfTokens)
-                elif operand2 == "":
-                    operand2 = EvaluateTokens(arrayOfTokens)
-                    curTotal += EvaluateCurExpression(operand1, operator, operand2)
+                curTotal = EvaluateCurExpression(curTotal, operator, EvaluateTokens(arrayOfTokens))
+                isPrevCharAnOp = False
+                operand = ""
             elif i == ")":
-                if operand1 != "" and operand2 == "":
-                    return EvaluateCurExpression(curTotal, operator, operand1)
+                if operand != "":
+                    curTotal = EvaluateCurExpression(curTotal, operator, operand)
+                    isPrevCharAnOp = False
+                    operand = ""
                 return curTotal
             elif i in literals:
                 operator = i
-            # This is the logic state where only non-literal tokens exist.
-            elif operand1 == "":
+                isPrevCharAnOp = True
+            else:
                 if i in userVariableTokens.keys():
-                    operand1 = userVariableTokens.get(i)
+                    operand = userVariableTokens.get(i)
                 else:
-                    operand1 = i
-                if len(userTokens) == 0:
-                    curTotal = EvaluateCurExpression(curTotal, operator, operand1)
-                    operand1 = ""
-                    operand2 = ""
-            elif operand2 == "":
-                if i in userVariableTokens.keys():
-                    operand2 = userVariableTokens.get(i)
-                else:
-                    operand2 = i
-                curTotal += EvaluateCurExpression(operand1, operator, operand2)
-                operand1 = ""
-                operand2 = ""
+                    operand = i
+                curTotal = EvaluateCurExpression(curTotal, operator, operand)
+                operand = ""
+    if operand != "":
+        return EvaluateCurExpression(curTotal, operator, operand)
     return curTotal
 
-def EvaluateCurExpression(operand1, operator, operand2):
+def EvaluateCurExpression(curTotal, operator, operand):
     match operator:
         case "+" | "":
-            return operand1 + operand2
+            return curTotal + operand
         case "-":
-            return operand1 - operand2
+            return curTotal - operand
 
 # The Start of the Program
-while isLooping:
+while True:
     TokenizeInput(input())
     if userTokens.count("(") is userTokens.count(")"):
         print(EvaluateTokens(userTokens))
