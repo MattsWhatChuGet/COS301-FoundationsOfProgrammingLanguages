@@ -9,7 +9,7 @@ tokens = (
     'NAME', 'NUMBER',
 )
 
-literals = ['=', '+', '-', '*', '/', '(', ')','//', '%']
+literals = ['=', '+', '-', '*', '/', '(', ')']
 
 # Tokens
 
@@ -39,7 +39,7 @@ lexer = lex.lex()
 
 precedence = (
     ('left', '+', '-'),
-    ('left', '*', '/', '%', '//'),
+    ('left', '*', '/'),
     ('right', 'UMINUS'),
 )
 
@@ -69,8 +69,6 @@ def p_expression_binop(p):
         p[0] = p[1] * p[3]
     elif p[2] == '/':
         p[0] = p[1] / p[3]
-    elif p[2] == '%':
-        p[0] = p[1] % p[3]
 
 
 def p_expression_uminus(p):
