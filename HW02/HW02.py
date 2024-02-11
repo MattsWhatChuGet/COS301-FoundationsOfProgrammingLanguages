@@ -6,7 +6,7 @@
 # -----------------------------------------------------------------------------
 
 tokens = (
-    'NAME', 'NUMBER',
+    'NAME', 'NUMBER', 'FLOORDIV', 'FLOAT'
 )
 
 literals = ['=', '+', '-', '*', '/', '(', ')', '%']
@@ -14,7 +14,11 @@ literals = ['=', '+', '-', '*', '/', '(', ')', '%']
 # Tokens
 
 t_NAME = r'[a-zA-Z_][a-zA-Z0-9_]*'
-
+t_FLOORDIV = r'//'
+def t_FLOAT(t):
+    r'\d+\.\d+'
+    t.value = float(t.value)
+    return t
 
 def t_NUMBER(t):
     r'\d+'
@@ -61,7 +65,8 @@ def p_expression_binop(p):
                   | expression '-' expression
                   | expression '*' expression
                   | expression '/' expression
-                  | expression '%' expression'''
+                  | expression '%' expression
+                  | expression FLOORDIV expression'''
     if p[2] == '+':
         p[0] = p[1] + p[3]
     elif p[2] == '-':
@@ -72,7 +77,8 @@ def p_expression_binop(p):
         p[0] = p[1] / p[3]
     elif p[2] == '%':
         p[0] = p[1] % p[3]
-
+    elif p[2] == '//':
+        p[0] = p[1] // p[3]
 
 def p_expression_uminus(p):
     "expression : '-' expression %prec UMINUS"
@@ -86,6 +92,10 @@ def p_expression_group(p):
 
 def p_expression_number(p):
     "expression : NUMBER"
+    p[0] = p[1]
+
+def p_expression_float(p):
+    "expression : FLOAT"
     p[0] = p[1]
 
 

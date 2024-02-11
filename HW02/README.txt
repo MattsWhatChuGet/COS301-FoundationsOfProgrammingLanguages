@@ -64,7 +64,7 @@ Unless:
 # 3. Documentation
     In this section I will note my reasoning, pseudocode, and attempts with their results with each issue.
 
-## 3.0 Implementing Operators
+## 3.0 Implementing Operators [SUCCESS]
     To start, I observed existing code to approximate needed changes.
 
 Here are a list of my starting observations:
@@ -96,3 +96,34 @@ Now, here's where I start to actually implement my assumptions:
             - Ran the program, and the % returned expected results.
         2b [ERROR] Tried doing the same with '//', as expected, yacc couldn't parse it.
             - Removed changes and then wondered what to do next.
+
+    From here I decide to do some tinkering to figure out how things work.
+    - I removed '%' from literals[], tried it, returned as an illegal char.
+        - So I need to have "//" in literals somehow.
+
+    I then investigated lex.py to diagnose its limitations.
+    - Immediately intimidated by its size - 902 lines. This makes me feel like this isn't within the scope of the HW.
+
+Watched the class recording of going over the Quiz.
+    - Mentioned that literals are always one char, so I do not think editing lex is the answer.
+    - Perhaps I need to make it a non-literal?
+        - Looking closer at t_NUMBER, maybe I need to make a t_FLOORDIV with `r'//'` and t.value = char(t.value).
+        - Noticed that t_NAME was just a string, so I will try that first.
+        - [SUCCESS] Make a token defined as "t_FLOORDIV = r'//'", added a condition in '...binop(p)' and it works.
+
+## 3.0 [DONE] ##
+The two new operators work. Now it's time to handle floats vs ints
+################
+
+## 3.1 [SUCCESS] Floats vs Int Behavior
+    3.1.0. I appended 'FLOAT' to tokens = ().
+    3.1.1. Defined t_FLOAT(t):
+        - r'\d+\.\d+'   t.value = float(t.value)   return t
+    3.1.2. Defined p_expression_float(p):
+        - "expression : FLOAT"     p[0] = p[1]
+
+    And it works!
+
+## 3.1 [DONE] ##
+Homework Accomplish
+################
