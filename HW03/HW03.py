@@ -6,7 +6,7 @@
 # -----------------------------------------------------------------------------
 
 tokens = (
-    'NAME', 'NUMBER', 'FLOORDIV', 'FLOAT'
+    'NAME', 'NUMBER', 'FLOORDIV', 'FLOAT', 'LIST'
 )
 
 literals = ['=', '+', '-', '*', '/', '(', ')', '%']
@@ -15,7 +15,7 @@ literals = ['=', '+', '-', '*', '/', '(', ')', '%']
 
 t_NAME = r'[a-zA-Z_][a-zA-Z0-9_]*'
 t_FLOORDIV = r'//'
-
+t_LIST = "'(' [expression ', ']* ')'"
 
 def t_FLOAT(t):
     r'\d+\.\d+'

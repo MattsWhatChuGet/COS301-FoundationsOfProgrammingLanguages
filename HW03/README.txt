@@ -35,6 +35,9 @@ This section is a pseudo-journal entry of my process in figuring out the task.
     2. Write rules for the different situations a List will be in to match the expected behavior
 
     ## 3.2 Defining a List
+    My first attempt will be to :
+        1. Create a token called 'LIST'
+        2. Define it as "'(' [expression ',']* ')'"
 
 
 
