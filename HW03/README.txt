@@ -33,7 +33,7 @@ The purpose of this assignment it to expand upon HW02/calc.py to implement a one
         [ ] 2.1.3: List to list operators, index to index.
                (1, 2, 3) + (2, 4, 6) -> (3, 6, 9,)
                (1, 2, 3) * (2, 2, 2) -> (2, 4, 6,)
-        [ ] 2.1.5: Single token in list
+        [*] 2.1.5: Single token in list
             (1,) -> (1,)
         [*] 2.1.6: No comma = not list
             (1) -> 1
@@ -70,6 +70,9 @@ This section is a pseudo-journal entry of my process in figuring out the task.
     ## 3.3 List Operator Grammar
 
         I am prioritizing data manipulation over behavior 2.1.0 for now.
+
+        [Success 2.1.6] Added more conditions in p_listitems and changed some logic to allow for one expression with a comma to be
+        defined as a list.
 
         To get the remaining behaviors, I need to have some list grammar rules defined
         comparable to p_expression_binop(p) function but for lists.
