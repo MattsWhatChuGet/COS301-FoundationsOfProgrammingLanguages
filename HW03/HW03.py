@@ -1,22 +1,20 @@
-# -----------------------------------------------------------------------------
-# calc.py
-#
-# A simple calculator with variables.   This is from O'Reilly's
-# "Lex and Yacc", p. 63.
-# -----------------------------------------------------------------------------
+
+
+# | Variables |
+names = {}
 
 tokens = (
-    'NAME', 'NUMBER', 'FLOORDIV', 'FLOAT', 'LIST'
+    'NAME', 'NUMBER', 'FLOORDIV', 'FLOAT'
 )
 
-literals = ['=', '+', '-', '*', '/', '(', ')', '%']
-
-# Tokens
+literals = ['=', '+', '-', '*', '/', '(', ')', '%', ',']
 
 t_NAME = r'[a-zA-Z_][a-zA-Z0-9_]*'
 t_FLOORDIV = r'//'
-t_LIST = "'(' [expression ', ']* ')'"
 
+# END VARIABLES
+
+# | Token Definitions |
 def t_FLOAT(t):
     r'\d+\.\d+'
     t.value = float(t.value)
@@ -41,21 +39,17 @@ def t_error(t):
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
 
+# END TOKEN DEFINITIONS
 
-# Build the lexer
 import ply.lex as lex
 lexer = lex.lex()
 
-# Parsing rules
-
+# | Statement Grammar |
 precedence = (
     ('left', '+', '-'),
     ('left', '*', '/'),
     ('right', 'UMINUS'),
 )
-
-# dictionary of names
-names = {}
 
 
 def p_statement_assign(p):
@@ -66,8 +60,10 @@ def p_statement_assign(p):
 def p_statement_expr(p):
     'statement : expression'
     print(p[1])
+##
 
 
+# Expression Grammar
 def p_expression_binop(p):
     '''expression : expression '+' expression
                   | expression '-' expression
@@ -75,6 +71,7 @@ def p_expression_binop(p):
                   | expression '/' expression
                   | expression '%' expression
                   | expression FLOORDIV expression'''
+
     if p[2] == '+':
         p[0] = p[1] + p[3]
     elif p[2] == '-':
@@ -119,8 +116,37 @@ def p_expression_name(p):
 
 
 def p_expression_list(p):
-    "expression: '(' expression ,* ')'"
+    "expression : list"
+    p[0] = p[1]
+
+# def p_expression_listOp(p):
+#    '''expression : list '+' list
+#                  | list '-' list
+#                  | list '*' list
+#                  | list '/' list
+#                  | list '%' list
+#                  | list FLOORDIV list'''
+#    print("List Op Triggered")
+
+
+##
+
+# List Grammar
+def p_list(p):
+    "list : '(' listitems ')'"
     p[0] = p[2]
+
+
+def p_listitems(p):
+    '''listitems : listitems ',' expression
+                 | expression '''
+
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[3]]
+
+##
 
 
 def p_error(p):
