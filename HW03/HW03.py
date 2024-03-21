@@ -139,13 +139,22 @@ def p_list(p):
 
 def p_listitems(p):
     '''listitems : listitems ',' expression
-                 | expression ','
                  | expression '''
 
-    if len(p) == 2 or len(p) == 3:
+    if len(p) == 2:
         p[0] = [p[1]]
     else:
         p[0] = p[1] + [p[3]]
+
+
+# Version that works
+#        '''listitems : listitems ',' expression
+#                     | expression '''
+#
+#    if len(p) == 2:
+#        p[0] = [p[1]]
+#    else:
+#        p[0] = p[1] + [p[3]]
 
 ##
 

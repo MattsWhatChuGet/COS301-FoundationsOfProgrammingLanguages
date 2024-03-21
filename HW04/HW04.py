@@ -1,20 +1,23 @@
 # -----------------------------------------------------------------------------
-# calc.py
-#
-# A simple calculator with variables.   This is from O'Reilly's
-# "Lex and Yacc", p. 63.
+# Homework 04
+# Matthew Patterson
 # -----------------------------------------------------------------------------
 
+# imports
+import disassembler
+import fileinput
+
+
+# Tokens
 tokens = (
     'NAME', 'NUMBER', 'FLOORDIV', 'FLOAT'
 )
 
 literals = ['=', '+', '-', '*', '/', '(', ')', '%']
 
-# Tokens
-
 t_NAME = r'[a-zA-Z_][a-zA-Z0-9_]*'
 t_FLOORDIV = r'//'
+
 def t_FLOAT(t):
     r'\d*\.\d+'
     t.value = float(t.value)
@@ -118,11 +121,10 @@ def p_error(p):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-while True:
-    try:
-        s = input('calc > ')
-    except EOFError:
-        break
-    if not s:
-        continue
-    yacc.parse(s)
+def main():
+    s = open("Samp01.txt").readlines()
+    for l in s:
+        yacc.parse(l)
+
+main()
+disassembler.disassemble(main)
