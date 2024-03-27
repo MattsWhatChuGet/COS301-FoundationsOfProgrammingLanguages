@@ -5,7 +5,7 @@
 
 # imports
 import disassembler
-import fileinput
+import sys
 
 
 # Tokens
@@ -117,14 +117,10 @@ def p_error(p):
     else:
         print("Syntax error at EOF")
 
-
 import ply.yacc as yacc
 parser = yacc.yacc()
 
 def main():
-    s = open("Samp01.txt").readlines()
-    for l in s:
-        yacc.parse(l)
-
+    for l in sys.stdin:
+        print(l)
 main()
-disassembler.disassemble(main)

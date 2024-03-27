@@ -13,12 +13,12 @@ import types
 import sys
 from io import StringIO
 
-#if str(sys.version)[0:3] != "3.2":
-#    print("************************************************************")
-#    print("* WARNING: disassembler.py should be run using Python 3.2  *")
-#    print("*          You are running Python", str(sys.version)[0:3],(" "*20),"*")
-#    print("*          The disassembly may not be correct.             *")
-#    print("************************************************************")
+if str(sys.version)[0:3] != "3.2":
+    print("************************************************************")
+    print("* WARNING: disassembler.py should be run using Python 3.2  *")
+    print("*          You are running Python", str(sys.version)[0:3],(" "*20),"*")
+    print("*          The disassembly may not be correct.             *")
+    print("************************************************************")    
 
 def f(x,y):
     def g(z):
