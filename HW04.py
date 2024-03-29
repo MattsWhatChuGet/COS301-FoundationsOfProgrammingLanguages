@@ -7,11 +7,20 @@
 import disassembler
 import sys
 
+# Compile Assembly Variables
+func = "Function: "
+conts = []
+locals = []
+globals = []
+body = ["BEGIN"]
+indent = "          "
 
 # Tokens
 tokens = (
     'NAME', 'NUMBER', 'FLOORDIV', 'FLOAT'
 )
+
+### GRAMMAR RULES ###
 
 literals = ['=', '+', '-', '*', '/', '(', ')', '%']
 
@@ -26,6 +35,7 @@ def t_FLOAT(t):
 def t_NUMBER(t):
     r'\d+'
     t.value = int(t.value)
+    conts.append(t.value)
     return t
 
 t_ignore = " \t"
@@ -60,7 +70,7 @@ def p_statement_assign(p):
 
 def p_statement_expr(p):
     'statement : expression'
-    print(p[1])
+    #print(p[1]) - Call print funcs here
 
 
 def p_expression_binop(p):
@@ -117,10 +127,30 @@ def p_error(p):
     else:
         print("Syntax error at EOF")
 
+### END GRAMMAR RULES ###
+
+### CUSTOM FUNCTIONS ###
+def CompileStringList(list):
+    newStr = ""
+    for i in range(0, len(list)):
+        newStr += str(conts[i])
+        if(i < len(list) -1):
+            newStr += ", "
+    return newStr
+
+def PrintAssembly():
+    # Prints Assembly Header
+    print(func + "main/0")
+    print("Constants: " + CompileStringList(conts))
+    print("Locals: " + CompileStringList(locals))
+    print("Globals: " + CompileStringList(globals))
+
 import ply.yacc as yacc
 parser = yacc.yacc()
 
 def main():
+    t = ""
     for l in sys.stdin:
-        print(l)
+        yacc.parse(l)
+    PrintAssembly()
 main()
