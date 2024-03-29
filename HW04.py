@@ -30,6 +30,7 @@ t_FLOORDIV = r'//'
 def t_FLOAT(t):
     r'\d*\.\d+'
     t.value = float(t.value)
+    conts.append(t.value)
     return t
 
 def t_NUMBER(t):
@@ -66,7 +67,7 @@ names = {}
 def p_statement_assign(p):
     'statement : NAME "=" expression'
     names[p[1]] = p[3]
-
+    locals.append(p[1])
 
 def p_statement_expr(p):
     'statement : expression'
@@ -149,7 +150,6 @@ import ply.yacc as yacc
 parser = yacc.yacc()
 
 def main():
-    t = ""
     for l in sys.stdin:
         yacc.parse(l)
     PrintAssembly()
